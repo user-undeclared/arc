@@ -1,6 +1,6 @@
-#include "std.h"
+#include "arc/standard_library.h"
 
-Int start(String arguments[], Usize argument_count) {
+Int main(String arguments[], Usize argument_count) {
     if(argument_count == 0) {
         chain_println("no arguments were provided");
         return 0;

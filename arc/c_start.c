@@ -1,6 +1,6 @@
-#include "std.h"
+#include "standard_library.h"
 
-Int start(String arguments[], Usize argument_count);
+Int main(String arguments[], Usize argument_count);
 
 Int _c_start(Ureg* stack_pointer) {
     Chain* argument_chains = ((Chain*) stack_pointer) + 1;
@@ -11,7 +11,7 @@ Int _c_start(Ureg* stack_pointer) {
         arguments[argument_index] = string_from_chain(argument_chains[argument_index]);
     }
 
-    Int exit_code = start(arguments, argument_count);
+    Int exit_code = main(arguments, argument_count);
     print_buffer_flush();
     return exit_code;
 }
