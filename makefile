@@ -10,6 +10,10 @@ LDLIBS  += -larc
 .PHONY: all
 all: $(examples)
 
+.PHONY: clean
+clean:
+	$(RM) $(examples) $(example_dir)/*.o $(library_dir)/*.o $(library_dir)/*.a tags
+
 $(example_dir)/%: $(example_dir)/%.o $(library_dir)/libarc.a
 	$(LD) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
@@ -19,12 +23,8 @@ $(example_dir)/%.o: $(example_dir)/%.c
 $(library_dir)/libarc.a: $(library_dir)/start.o $(library_dir)/c_start.o $(library_dir)/standard_library.o
 	$(AR) -rcs $@ $^
 
-$(library_dir)/start.o: $(library_dir)/start.asm
-	fasm $^
+$(library_dir)/%.o: $(library_dir)/%.s
+	$(AS) $^ -o $@
 
 tags: *.c $(library_dir)/*.c $(library_dir)/*.h
 	ctags $^
-
-.PHONY: clean
-clean:
-	$(RM) $(examples) $(example_dir)/*.o $(library_dir)/*.o $(library_dir)/*.a tags
