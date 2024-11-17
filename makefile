@@ -4,17 +4,17 @@ lib_dir = arc
 
 CFLAGS  += -Wall -Wextra -pedantic -Wno-main -fno-stack-protector -std=c11 -g
 LDFLAGS += -L $(lib_dir)
-LDLIBS  += -lthing
+LDLIBS  += -larc
 
 all: hello print-args
 
-hello: hello.o $(lib_dir)/libthing.a
-	$(LD) $(LDFLAGS) $(LDLIBS) $^ -o $@
+hello: hello.o $(lib_dir)/libarc.a
+	$(LD) $(LDFLAGS) $(LDLIBS) $< -o $@
 
-print-args: print-args.o $(lib_dir)/libthing.a
-	$(LD) $(LDFLAGS) $(LDLIBS) $^ -o $@
+print-args: print-args.o $(lib_dir)/libarc.a
+	$(LD) $(LDFLAGS) $(LDLIBS) $< -o $@
 
-$(lib_dir)/libthing.a: $(lib_dir)/start.o $(lib_dir)/c_start.o $(lib_dir)/standard_library.o
+$(lib_dir)/libarc.a: $(lib_dir)/start.o $(lib_dir)/c_start.o $(lib_dir)/standard_library.o
 	$(AR) -rcs $@ $^
 
 $(lib_dir)/start.o: $(lib_dir)/start.asm
