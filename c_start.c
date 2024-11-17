@@ -1,7 +1,9 @@
 #include "std.h"
 
+Int start(String arguments[], Usize argument_count);
+
 Int _c_start(Ureg* stack_pointer) {
-    const Byte** argument_chains = ((const Byte**) stack_pointer) + 1;
+    Chain* argument_chains = ((Chain*) stack_pointer) + 1;
     Usize argument_count = *stack_pointer;
 
     String arguments[argument_count];

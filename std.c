@@ -1,6 +1,6 @@
 #include "std.h"
 
-Usize chain_get_length(const Byte* chain) {
+Usize chain_get_length(Chain chain) {
     if(chain == NULL) {
         return 0;
     }
@@ -11,10 +11,10 @@ Usize chain_get_length(const Byte* chain) {
     return chain_length;
 }
 
-String string_from_chain(const Byte* chain) {
+String string_from_chain(Chain chain) {
     return (String) {
-        .bytes = chain,
-        .length = chain_get_length(chain),
+        .bytes = (Byte*) chain,
+        .byte_count = chain_get_length(chain),
     };
 }
 
@@ -23,22 +23,22 @@ String string_temporary_from_usize(Usize usize) {
     static Byte buffer[20];
     String result = {
         .bytes = buffer,
-        .length = 0,
+        .byte_count = 0,
     };
     if(usize == 0) {
         buffer[0] = '0';
-        result.length = 1;
+        result.byte_count = 1;
         return result;
     }
     for(Usize accumulator = usize; accumulator > 0; accumulator /= 10) {
         Byte base_ten_ones_place = accumulator % 10;
         Byte digit = base_ten_ones_place + '0';
-        buffer[result.length] = digit;
-        result.length++;
+        buffer[result.byte_count] = digit;
+        result.byte_count++;
     }
-    for(Usize byte_index = 0; byte_index < result.length / 2; byte_index++) {
-        Byte temp = buffer[result.length - byte_index - 1];
-        buffer[result.length - byte_index - 1] = buffer[byte_index];
+    for(Usize byte_index = 0; byte_index < result.byte_count / 2; byte_index++) {
+        Byte temp = buffer[result.byte_count - byte_index - 1];
+        buffer[result.byte_count - byte_index - 1] = buffer[byte_index];
         buffer[byte_index] = temp;
         
     }
@@ -52,7 +52,7 @@ Bool string_to_usize(Usize* result, Uint* result_digit_count, String string) {
 
     Usize accumulator = 0;
     Usize digit_index = 0;
-    for(; digit_index < string.length; digit_index++) {
+    for(; digit_index < string.byte_count; digit_index++) {
         Byte digit = string.bytes[digit_index];
         if(digit < '0' || digit > '9') {
             break;
@@ -111,7 +111,7 @@ Bool print_byte(Byte byte) {
 }
 
 Bool print(String message) {
-    for(Usize byte_index = 0; byte_index < message.length; byte_index++) {
+    for(Usize byte_index = 0; byte_index < message.byte_count; byte_index++) {
         if(!print_byte(message.bytes[byte_index])) {
             return false;
         }
@@ -123,17 +123,17 @@ Bool println(String message) {
     return print(message) && print_byte('\n');
 }
 
-Bool chain_print(const Byte* message) {
+Bool chain_print(Chain message) {
     return print(string_from_chain(message));
 }
 
-Bool chain_println(const Byte* message) {
+Bool chain_println(Chain message) {
     return println(string_from_chain(message));
 }
 
-Bool vprintfc(const Byte* fmt, va_list argument_list) {
+Bool vprintfc(Chain fmt, va_list argument_list) {
     String format = string_from_chain(fmt);
-    const Byte* bytes_end = format.bytes + format.length;
+    const Byte* bytes_end = format.bytes + format.byte_count;
     const Byte* byte = format.bytes;
     while(byte < bytes_end) {
         if(*byte != '%') {
@@ -157,7 +157,7 @@ Bool vprintfc(const Byte* fmt, va_list argument_list) {
                 Uint padding_digit_count;
                 String padding_string = {
                     .bytes = byte,
-                    .length = bytes_end - byte,
+                    .byte_count = bytes_end - byte,
                 };
                 if(!string_to_usize(&padding, &padding_digit_count, padding_string)) {
                     return false;
@@ -172,7 +172,7 @@ Bool vprintfc(const Byte* fmt, va_list argument_list) {
                     case 'z': {
                         Usize argument = va_arg(argument_list, Usize);
                         String argument_string = string_temporary_from_usize(argument);
-                        for(Uint padding_index = argument_string.length; padding_index < padding; padding_index++) {
+                        for(Uint padding_index = argument_string.byte_count; padding_index < padding; padding_index++) {
                             print_byte(padding_byte);
                         }
                         print(argument_string);
@@ -204,7 +204,7 @@ Bool vprintfc(const Byte* fmt, va_list argument_list) {
     return 0;
 }
 
-Bool printflnc(const Byte* fmt, ...) {
+Bool printflnc(Chain fmt, ...) {
     va_list argument_list;
     va_start(argument_list, fmt);
     Bool result = vprintfc(fmt, argument_list);
