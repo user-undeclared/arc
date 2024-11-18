@@ -1,30 +1,38 @@
-library_dir = arc
+library_name = arc
+
+library_dir = $(library_name)
 example_dir = examples
 
+library  = $(library_dir)/lib$(library_name).a
 examples = $(patsubst %.c, %, $(wildcard $(example_dir)/*.c))
 
-CFLAGS  += -Wall -Wextra -pedantic -Wno-main -fno-stack-protector -I . -std=c11 -g
+CFLAGS  += -Wall -Wextra -pedantic -Wno-main \
+           -nostdlib -fno-stack-protector -fno-builtin \
+           -I . -std=c11
 LDFLAGS += -L $(library_dir)
-LDLIBS  += -larc
+LDLIBS  += -l$(library_name)
 
-.PHONY: all
-all: $(examples)
+.PHONY: all library examples clean
+all: library examples
 
-.PHONY: clean
+library: $(library)
+
+examples: $(examples)
+
 clean:
 	$(RM) $(examples) $(example_dir)/*.o $(library_dir)/*.o $(library_dir)/*.a tags
 
-$(example_dir)/%: $(example_dir)/%.o $(library_dir)/libarc.a
-	$(LD) $(LDFLAGS) $^ $(LDLIBS) -o $@
-
-$(example_dir)/%.o: $(example_dir)/%.c
-	$(CC) $(CFLAGS) -c $^ -o $@
-
-$(library_dir)/libarc.a: $(library_dir)/start.o $(library_dir)/c_start.o $(library_dir)/standard_library.o
+$(library): $(library_dir)/start.o $(library_dir)/c_start.o $(library_dir)/standard_library.o
 	$(AR) -rcs $@ $^
 
 $(library_dir)/%.o: $(library_dir)/%.s
 	$(AS) $^ -o $@
 
-tags: *.c $(library_dir)/*.c $(library_dir)/*.h
+$(example_dir)/%: $(example_dir)/%.o $(library)
+	$(LD) $(LDFLAGS) $^ $(LDLIBS) -o $@
+
+$(example_dir)/%.o: $(example_dir)/%.c
+	$(CC) $(CFLAGS) -c $^ -o $@
+
+tags: $(library_dir)/*.c $(library_dir)/*.h
 	ctags $^

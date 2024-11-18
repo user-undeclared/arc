@@ -3,6 +3,10 @@
 
 #include <stdarg.h>
 
+#define NULL ((void*) 0)
+#define true (0 == 0)
+#define false (-1 == 0)
+
 typedef unsigned long Usize;
 typedef unsigned long Ureg;
 typedef          long Ireg;
@@ -11,10 +15,6 @@ typedef          char Char;
 typedef unsigned int  Uint;
 typedef          int  Int;
 typedef         _Bool Bool;
-
-#define NULL ((void*) 0)
-#define true (0 == 0)
-#define false (-1 == 0)
 
 typedef const char* Chain;
 
