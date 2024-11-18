@@ -1,6 +1,8 @@
 .extern _c_start
 
+.set SYSCALL_WRITE, 1
 .set SYSCALL_EXIT,  60
+
 .set STDOUT_FILENO, 1
 
 .text
@@ -19,7 +21,7 @@ _exit:
 _write:
     mov %rsi, %rdx
     mov %rdi, %rsi
-    mov $STDOUT_FILENO, %eax
-    mov %eax, %edi
+    mov $STDOUT_FILENO, %edi
+    mov $SYSCALL_WRITE, %eax
     syscall
     ret

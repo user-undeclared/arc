@@ -1,11 +1,9 @@
-#ifndef STD_H_
-#define STD_H_
+#ifndef STANDARD_LIBRARY_H_
+#define STANDARD_LIBRARY_H_
 
+#include <stddef.h>
+#include <stdbool.h>
 #include <stdarg.h>
-
-#define NULL ((void*) 0)
-#define true (0 == 0)
-#define false (-1 == 0)
 
 typedef unsigned long Usize;
 typedef unsigned long Ureg;
@@ -14,7 +12,7 @@ typedef unsigned char Byte;
 typedef          char Char;
 typedef unsigned int  Uint;
 typedef          int  Int;
-typedef         _Bool Bool;
+typedef          bool Bool;
 
 typedef const char* Chain;
 

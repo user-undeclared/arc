@@ -8,7 +8,7 @@ examples = $(patsubst %.c, %, $(wildcard $(example_dir)/*.c))
 
 CFLAGS  += -Wall -Wextra -pedantic -Wno-main \
            -nostdlib -fno-stack-protector -fno-builtin \
-           -I . -std=c11
+           -I . -std=c99
 LDFLAGS += -L $(library_dir)
 LDLIBS  += -l$(library_name)
 

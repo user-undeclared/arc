@@ -1,3 +1,7 @@
+#include <assert.h>
+#include <limits.h>
+#include "start.h"
+
 #include "standard_library.h"
 
 Usize chain_get_length(Chain chain) {
@@ -73,40 +77,37 @@ Bool string_to_usize(Usize* result, Uint* result_digit_count, String string) {
     return true;
 }
 
-Int _write(const Byte* bytes, Usize byte_count);
-void _exit(Int exit_code);
-
-#define _PRINT_BUFFER_CAPACITY 1024
+#define PRINT_BUFFER_CAPACITY 1024
 typedef struct {
-    Byte bytes[_PRINT_BUFFER_CAPACITY];
+    Byte bytes[PRINT_BUFFER_CAPACITY];
     Usize byte_count;
 } Print_Buffer;
-static Print_Buffer _print_buffer;
+static Print_Buffer print_buffer;
 
 Bool print_buffer_flush(void) {
-    Ireg bytes_written = _write(_print_buffer.bytes, _print_buffer.byte_count);
-    return bytes_written > 0 || (Ureg) bytes_written == _print_buffer.byte_count;
+    Ireg bytes_written = _write(print_buffer.bytes, print_buffer.byte_count);
+    return bytes_written > 0 || (Ureg) bytes_written == print_buffer.byte_count;
 }
 
 Bool print_byte(Byte byte) {
-    Bool byte_will_fill_print_buffer = _print_buffer.byte_count + 1 >= _PRINT_BUFFER_CAPACITY;
+    Bool byte_will_fill_print_buffer = print_buffer.byte_count + 1 >= PRINT_BUFFER_CAPACITY;
     Bool byte_is_newline = byte == '\n';
     if(byte_will_fill_print_buffer || byte_is_newline) {
         if(byte_is_newline) {
-            _print_buffer.bytes[_print_buffer.byte_count] = byte;
-            _print_buffer.byte_count += 1;
+            print_buffer.bytes[print_buffer.byte_count] = byte;
+            print_buffer.byte_count += 1;
         }
         if(!print_buffer_flush()) {
             return false;
         }
-        _print_buffer.byte_count = 0;
+        print_buffer.byte_count = 0;
         if(byte_is_newline) {
             return true;
         }
     }
 
-    _print_buffer.bytes[_print_buffer.byte_count] = byte;
-    _print_buffer.byte_count += 1;
+    print_buffer.bytes[print_buffer.byte_count] = byte;
+    print_buffer.byte_count += 1;
     return true;
 }
 
